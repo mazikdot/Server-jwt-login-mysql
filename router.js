@@ -56,12 +56,12 @@ router.post('/login', loginValidation, (req, res, next) => {
       // user does not exists
       if (err) {
         throw err;
-        return res.status(400).send({
+        return res.send({
           msg: err
         });
       }
       if (!result.length) {
-        return res.status(401).send({
+        return res.send({
           msg: 'Email or password is incorrect!'
         });
       }
@@ -73,7 +73,7 @@ router.post('/login', loginValidation, (req, res, next) => {
           // wrong password
           if (bErr) {
             throw bErr;
-            return res.status(401).send({
+            return res.send({
               msg: 'Email or password is incorrect!'
             });
           }
@@ -88,7 +88,7 @@ router.post('/login', loginValidation, (req, res, next) => {
               user: result[0]
             });
           }
-          return res.status(401).send({
+          return res.send({
             msg: 'Username or password is incorrect!'
           });
         }
@@ -109,7 +109,7 @@ router.get('/get-user', signupValidation, (req, res, next) => {
             message: "Please provide the token",
         });
     }
-
+    
     const theToken = req.headers.authorization.split(' ')[1];
     const decoded = jwt.verify(theToken, 'the-super-strong-secrect');
 
