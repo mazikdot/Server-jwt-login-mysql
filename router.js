@@ -6,47 +6,47 @@ const { validationResult } = require('express-validator');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-router.post('/register', signupValidation, (req, res, next) => {
-  db.query(
-    `SELECT * FROM users WHERE LOWER(email) = LOWER(${db.escape(
-      req.body.email
-    )});`,
-    (err, result) => {
-      if (result.length) {
-        return res.status(409).send({
-          msg: 'This user is already in use!'
-        });
-      } else {
-        // username is available
-        bcrypt.hash(req.body.password, 10, (err, hash) => {
-          if (err) {
-            return res.status(500).send({
-              msg: err
-            });
-          } else {
-            // has hashed pw => add to database
-            db.query(
-              `INSERT INTO users (name, email, password) VALUES ('${req.body.name}', ${db.escape(
-                req.body.email
-              )}, ${db.escape(hash)})`,
-              (err, result) => {
-                if (err) {
-                  throw err;
-                  return res.status(400).send({
-                    msg: err
-                  });
-                }
-                return res.status(201).send({
-                  msg: 'The user has been registerd with us!'
-                });
-              }
-            );
-          }
-        });
-      }
-    }
-  );
-});
+// router.post('/register', signupValidation, (req, res, next) => {
+//   db.query(
+//     `SELECT * FROM users WHERE LOWER(email) = LOWER(${db.escape(
+//       req.body.email
+//     )});`,
+//     (err, result) => {
+//       if (result.length) {
+//         return res.status(409).send({
+//           msg: 'This user is already in use!'
+//         });
+//       } else {
+//         // username is available
+//         bcrypt.hash(req.body.password, 10, (err, hash) => {
+//           if (err) {
+//             return res.status(500).send({
+//               msg: err
+//             });
+//           } else {
+//             // has hashed pw => add to database
+//             db.query(
+//               `INSERT INTO users (name, email, password) VALUES ('${req.body.name}', ${db.escape(
+//                 req.body.email
+//               )}, ${db.escape(hash)})`,
+//               (err, result) => {
+//                 if (err) {
+//                   throw err;
+//                   return res.status(400).send({
+//                     msg: err
+//                   });
+//                 }
+//                 return res.status(201).send({
+//                   msg: 'The user has been registerd with us!'
+//                 });
+//               }
+//             );
+//           }
+//         });
+//       }
+//     }
+//   );
+// });
 
 
 router.post('/login', loginValidation, (req, res, next) => {
@@ -113,7 +113,7 @@ router.get('/get-user', signupValidation, (req, res, next) => {
     const theToken = req.headers.authorization.split(' ')[1];
     const decoded = jwt.verify(theToken, 'the-super-strong-secrect');
 
-    db.query('SELECT * FROM tbusers where user_username=?', decoded.user_username, function (error, results, fields) {
+    db.query("SELECT a.user_username as user_username , a.user_passwords as user_passwords,CONCAT(b.pre_th_name,a.user_firstname,+' ',a.user_lastname) as name ,a.user_phone as user_phone , a.user_email as user_email ,c.sex_name as sex_name,CONCAT('จังหวัด : ',e.name_th,' อำเภอ : ',r.name_th,' ตำบล : ',y.name_th) as address FROM tbusers as a  INNER JOIN tbprefix as b ON b.prefix_id = a.prefix_id INNER JOIN tbsex as c ON c.sex_id = a.sex_id INNER JOIN provinces as e ON e.province_id = a.province_id INNER JOIN amphures as r ON r.amphure_id = a.amphure_id INNER JOIN districts as y ON y.districts_id = a.districts_id  WHERE a.user_username = ?", decoded.user_username, function (error, results, fields) {
         if (error) throw error;
         return res.send({ error: false, data: results[0], message: 'Fetch Successfully.' });
     });

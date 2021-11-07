@@ -4,7 +4,8 @@ var conn = mysql.createConnection({
   user: 'root',      // Replace with your database username
   password: '',      // Replace with your database password
   database: 'webproject',
-  timezone : 'utc'
+  timezone: 'utc'
+  
 }); 
 
 conn.connect(function(err) {
